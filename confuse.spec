@@ -4,7 +4,7 @@
 #
 Name     : confuse
 Version  : 3.2.2
-Release  : 3
+Release  : 4
 URL      : https://github.com/martinh/libconfuse/releases/download/v3.2.2/confuse-3.2.2.tar.gz
 Source0  : https://github.com/martinh/libconfuse/releases/download/v3.2.2/confuse-3.2.2.tar.gz
 Summary  : configuration file parser library
