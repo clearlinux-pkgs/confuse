@@ -4,15 +4,15 @@
 #
 Name     : confuse
 Version  : 3.2.2
-Release  : 5
+Release  : 6
 URL      : https://github.com/martinh/libconfuse/releases/download/v3.2.2/confuse-3.2.2.tar.gz
 Source0  : https://github.com/martinh/libconfuse/releases/download/v3.2.2/confuse-3.2.2.tar.gz
 Summary  : configuration file parser library
 Group    : Development/Tools
 License  : ISC
-Requires: confuse-lib
-Requires: confuse-license
-Requires: confuse-locales
+Requires: confuse-lib = %{version}-%{release}
+Requires: confuse-license = %{version}-%{release}
+Requires: confuse-locales = %{version}-%{release}
 BuildRequires : flex
 
 %description
@@ -29,8 +29,9 @@ quick to integrate with your code.
 %package dev
 Summary: dev components for the confuse package.
 Group: Development
-Requires: confuse-lib
-Provides: confuse-devel
+Requires: confuse-lib = %{version}-%{release}
+Provides: confuse-devel = %{version}-%{release}
+Requires: confuse = %{version}-%{release}
 
 %description dev
 dev components for the confuse package.
@@ -47,7 +48,7 @@ doc components for the confuse package.
 %package lib
 Summary: lib components for the confuse package.
 Group: Libraries
-Requires: confuse-license
+Requires: confuse-license = %{version}-%{release}
 
 %description lib
 lib components for the confuse package.
@@ -71,28 +72,37 @@ locales components for the confuse package.
 
 %prep
 %setup -q -n confuse-3.2.2
+cd %{_builddir}/confuse-3.2.2
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1534714842
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1585184409
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %configure --disable-static
 make  %{?_smp_mflags}
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1534714842
+export SOURCE_DATE_EPOCH=1585184409
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/share/doc/confuse
-cp LICENSE %{buildroot}/usr/share/doc/confuse/LICENSE
+mkdir -p %{buildroot}/usr/share/package-licenses/confuse
+cp %{_builddir}/confuse-3.2.2/LICENSE %{buildroot}/usr/share/package-licenses/confuse/511dc3d6a4303ecf5e37b6aa8a452bad7150c5e5
 %make_install
 %find_lang confuse
 
@@ -101,7 +111,7 @@ cp LICENSE %{buildroot}/usr/share/doc/confuse/LICENSE
 
 %files dev
 %defattr(-,root,root,-)
-/usr/include/*.h
+/usr/include/confuse.h
 /usr/lib64/libconfuse.so
 /usr/lib64/pkgconfig/libconfuse.pc
 
@@ -115,8 +125,8 @@ cp LICENSE %{buildroot}/usr/share/doc/confuse/LICENSE
 /usr/lib64/libconfuse.so.2.0.0
 
 %files license
-%defattr(-,root,root,-)
-/usr/share/doc/confuse/LICENSE
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/confuse/511dc3d6a4303ecf5e37b6aa8a452bad7150c5e5
 
 %files locales -f confuse.lang
 %defattr(-,root,root,-)
